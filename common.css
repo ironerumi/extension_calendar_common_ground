@@ -5,6 +5,8 @@ body {
   padding: 16px;
   color: #333;
   min-width: 400px;
+  background-color: #f9f9f9;
+  color: #202124;
 }
 
 /* Header styling */
@@ -12,7 +14,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px; /* Add some space below the header */
+  background-color: white;
+  border-radius: 8px 8px 0 0;
+  padding: 12px 16px;
+  margin: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 
 .header h2 {
@@ -43,20 +49,73 @@ h1, h2, h3 {
 .container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  max-width: 100%;
+  padding: 0;
 }
 
+/* Card-based layout */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+.card h2 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+/* Action rows for aligned buttons and inputs */
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.action-row .input-field {
+  margin-bottom: 0;
+}
+
+.action-row button {
+  height: 36px;
+  white-space: nowrap;
+}
+
+/* Form layout */
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .form-row {
   display: flex;
   gap: 16px;
   align-items: center;
+  margin-bottom: 8px;
+}
+
+/* Compact form layout */
+.compact-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.compact-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  align-items: end;
 }
 
 label {
@@ -113,10 +172,31 @@ button:disabled {
   background-color: #f5f8ff;
 }
 
+/* Find slots button */
+.find-slots-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* Small label for additional info */
+.small-label {
+  font-size: 12px;
+  color: #5f6368;
+  margin-top: 8px;
+}
+
+/* Slots container */
 .slots-container {
-  margin-top: 16px;
-  border-top: 1px solid #eee;
-  padding-top: 16px;
+  margin-top: 12px;
+}
+
+.select-all-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .slot-item {
@@ -329,4 +409,26 @@ input:checked + .toggle-slider:before {
 /* Ensure buttons in lists don't stretch */
 .selected-list button, .management-list button {
   flex-shrink: 0;
+}
+
+/* Demo-specific styles */
+.demo-calendar-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.demo-calendar-item:last-child {
+  border-bottom: none;
+}
+
+.demo-slot-item {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

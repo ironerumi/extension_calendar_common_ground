@@ -17,142 +17,110 @@
     </div>
 
     <div id="auth-required" style="display: none;">
-      <p>Please authenticate with Google Calendar to use this extension.</p>
-      <button id="auth-button">Authenticate</button>
+      <div class="card">
+        <p>Please authenticate with Google Calendar to use this extension.</p>
+        <button id="auth-button">Authenticate</button>
+      </div>
     </div>
 
     <div id="main-content" style="display: none;">
-       <!-- Calendar Selection Section -->
-       <div class="form-group">
+      <!-- Calendar Selection Section -->
+      <div class="card">
         <h2>Select Calendars</h2>
+        
         <!-- Load Set -->
-        <div class="form-row" style="margin-bottom: 10px;">
-            <div class="form-group" style="flex-grow: 1;">
-                 <label for="load-set-dropdown">Load Saved Set:</label>
-                 <select id="load-set-dropdown" class="input-field">
-                   <option value="">-- Select a set --</option>
-                   <!-- Saved sets will be populated here -->
-                 </select>
-            </div>
-            <button type="button" id="load-set-button" class="button-secondary" style="align-self: flex-end;">Load Set</button>
+        <div class="action-row">
+          <select id="load-set-dropdown" class="input-field">
+            <option value="">-- Select a saved set --</option>
+            <!-- Saved sets will be populated here -->
+          </select>
+          <button type="button" id="load-set-button" class="button-secondary">Load</button>
         </div>
+        
         <!-- Search -->
         <input type="text" id="calendar-search-input" placeholder="Search calendars..." class="input-field">
         <div id="calendar-search-results" class="search-results">
           <!-- Search results will appear here -->
         </div>
+        
         <!-- Selected -->
-        <div id="selected-calendars-list" class="selected-list" style="margin-top: 10px;">
-          <h4>Selected:</h4>
+        <div id="selected-calendars-list" class="selected-list">
+          <h4 style="margin: 8px 0 4px 0;">Selected:</h4>
           <ul>
             <!-- Selected calendars will appear here -->
           </ul>
         </div>
+        
         <!-- Save Set -->
-         <div class="form-row" style="margin-top: 10px;">
-            <div class="form-group" style="flex-grow: 1;">
-                <label for="save-set-name">Save current selection as:</label>
-                <input type="text" id="save-set-name" placeholder="Name for this set..." class="input-field">
-            </div>
-             <button type="button" id="save-set-button" class="button-secondary" style="align-self: flex-end;">Save Set</button>
+        <div class="action-row">
+          <input type="text" id="save-set-name" placeholder="Name for this set..." class="input-field">
+          <button type="button" id="save-set-button" class="button-secondary">Save</button>
         </div>
-         <small>Manage saved sets in <a href="#" id="open-options-link-alt">Options</a>.</small>
-      </div>
-
-       <!-- Slot Finding Settings Section -->
-       <div class="form-group">
-           <h2>Find Slots Settings</h2>
-           <div class="form-row">
-                <div class="form-group">
-                  <label for="starting-date">Starting Date:</label>
-                  <input type="date" id="starting-date">
-                </div>
-
-                <div class="form-group">
-                  <label for="min-duration">Min Duration (min):</label>
-                  <input type="number" id="min-duration" min="15" step="15" value="60">
-                </div>
-                <div class="form-group">
-                  <label for="max-duration">Max Duration (min):</label>
-                  <input type="number" id="max-duration" min="15" step="15" value="120">
-                </div>
-            </div>
-
-           <div class="form-row">
-                <div class="form-group">
-                  <label for="required-slots">Required Slots:</label>
-                  <input type="number" id="required-slots" min="1" value="3">
-                </div>
-
-                <div class="form-group">
-                  <label for="spread-days">Spread Over (days):</label>
-                  <input type="number" id="spread-days" min="1" value="2">
-                </div>
-            </div>
-       </div>
-
-      <button id="find-slots-button">Find Available Slots</button>
-
-      <!-- Original form-row containing date/duration/etc. starts here -->
-      <!-- These elements are now moved into the "Find Slots Settings" section above -->
-      <!-- <div class="form-row">
-        <div class="form-group">
-          <label for="starting-date">Starting Date:</label>
-          <input type="date" id="starting-date">
-        </div>
-
-        <div class="form-group">
-          <label for="min-duration">Min Duration (min):</label>
-          <input type="number" id="min-duration" min="15" step="15" value="60">
-        </div>
-        <div class="form-group">
-          <label for="max-duration">Max Duration (min):</label>
-          <input type="number" id="max-duration" min="15" step="15" value="120">
+        
+        <div class="small-label">
+          Manage saved sets in <a href="#" id="open-options-link-alt">Options</a>.
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="required-slots">Required Slots:</label>
-          <input type="number" id="required-slots" min="1" value="3">
+      <!-- Slot Finding Settings Section -->
+      <div class="card">
+        <h2>Find Slots Settings</h2>
+        
+        <div class="compact-form-row">
+          <div class="compact-form-group">
+            <label for="starting-date">Starting Date:</label>
+            <input type="date" id="starting-date" class="input-field">
+          </div>
+
+          <div class="compact-form-group">
+            <label for="min-duration">Min Duration (min):</label>
+            <input type="number" id="min-duration" min="15" step="15" value="60" class="input-field">
+          </div>
+          
+          <div class="compact-form-group">
+            <label for="max-duration">Max Duration (min):</label>
+            <input type="number" id="max-duration" min="15" step="15" value="120" class="input-field">
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="spread-days">Spread Over (days):</label>
-          <input type="number" id="spread-days" min="1" value="2">
+        <div class="compact-form-row">
+          <div class="compact-form-group">
+            <label for="required-slots">Required Slots:</label>
+            <input type="number" id="required-slots" min="1" value="3" class="input-field">
+          </div>
+
+          <div class="compact-form-group">
+            <label for="spread-days">Spread Over (days):</label>
+            <input type="number" id="spread-days" min="1" value="2" class="input-field">
+          </div>
         </div>
+        
+        <button id="find-slots-button" class="find-slots-btn">Find Available Slots</button>
       </div>
 
-      <button id="find-slots-button">Find Available Slots</button>
-
-      <!-- Advanced settings link moved to header -->
-
-      <!-- Messages moved to the bottom -->
-
-      <div id="slots-container" class="slots-container" style="display: none;">
-        <h3>Available Slots</h3>
+      <!-- Available Slots Section -->
+      <div id="slots-container" class="card" style="display: none;">
+        <h2>Available Slots</h2>
+        
         <div class="select-all-container">
           <input type="checkbox" id="select-all-slots">
           <label for="select-all-slots">Select All</label>
         </div>
+        
         <div id="slots-list"></div>
 
-        <div id="bulk-booking-section" style="display: none;">
-          <div class="form-group">
-            <label for="meeting-name">Meeting Name:</label>
-            <input type="text" id="meeting-name" placeholder="Enter base name for meetings">
+        <div id="bulk-booking-section" style="display: none; margin-top: 12px;">
+          <div class="action-row">
+            <input type="text" id="meeting-name" placeholder="Enter base name for meetings" class="input-field">
+            <button id="book-meeting-button">Book Selected</button>
+            <button id="copy-slots-button" class="button-secondary">Copy Selected</button>
           </div>
-          <button id="book-meeting-button">Book Selected Slots</button>
-          <!-- Copy button moved into the same div -->
-          <button id="copy-slots-button" style="margin-left: 10px;">Copy Selected Slots</button>
         </div>
-
-        <!-- Removed separate copy-slots-container -->
       </div>
 
-      <!-- Message containers moved here -->
-      <div id="error-container" class="error" style="display: none; margin-top: 15px;"></div>
-      <div id="success-container" class="success" style="display: none; margin-top: 15px;"></div>
+      <!-- Message containers -->
+      <div id="error-container" class="error" style="display: none;"></div>
+      <div id="success-container" class="success" style="display: none;"></div>
     </div>
   </div>
 

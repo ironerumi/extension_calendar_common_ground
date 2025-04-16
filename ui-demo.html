@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Common Ground UI Demo</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    /* Additional modern styling */
+    body {
+      background-color: #f9f9f9;
+      color: #202124;
+    }
+    
+    .container {
+      max-width: 100%;
+      padding: 0;
+      gap: 12px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+    
+    .card h2 {
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f3f4;
+    }
+    
+    .header {
+      background-color: white;
+      border-radius: 8px 8px 0 0;
+      padding: 12px 16px;
+      margin: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .action-row .input-field {
+      margin-bottom: 0;
+    }
+    
+    .action-row button {
+      height: 36px;
+      white-space: nowrap;
+    }
+    
+    .form-row {
+      margin-bottom: 8px;
+    }
+    
+    .form-group {
+      margin-bottom: 8px;
+    }
+    
+    .compact-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .compact-form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      align-items: end;
+    }
+    
+    .find-slots-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 10px;
+      font-weight: 500;
+      font-size: 15px;
+    }
+    
+    .small-label {
+      font-size: 12px;
+      color: #5f6368;
+      margin-top: 8px;
+    }
+    
+    #slots-container {
+      margin-top: 12px;
+    }
+    
+    .select-all-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* Demo-specific styles */
+    .demo-calendar-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .demo-calendar-item:last-child {
+      border-bottom: none;
+    }
+
+    .demo-slot-item {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Common Ground</h2>
+      <a href="#" class="settings-icon-link" title="Advanced Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px">
+          <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81 c-0.04-0.24-0.24-0.41-0.48-0.41H9.08c-0.24,0-0.43,0.17-0.47,0.41L8.28,5.22C7.69,5.46,7.16,5.78,6.66,6.16L4.27,5.2 c-0.22-0.08-0.47,0-0.59,0.22L1.76,8.74c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C3.88,11.36,3.86,11.68,3.86,12 c0,0.32,0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22 l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.33,2.41c0.04,0.24,0.24,0.41,0.48,0.41h4.84c0.24,0,0.44-0.17,0.47-0.41 l0.33-2.41c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32 c0.12-0.2,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6 S13.98,15.6,12,15.6z"/>
+        </svg>
+      </a>
+    </div>
+
+    <div id="main-content">
+      <!-- Calendar Selection Section -->
+      <div class="card">
+        <h2>Select Calendars</h2>
+        
+        <!-- Load Set -->
+        <div class="action-row">
+          <select class="input-field">
+            <option value="">-- Select a saved set --</option>
+            <option value="work">Work Calendars</option>
+            <option value="personal">Personal Calendars</option>
+            <option value="team">Team Calendars</option>
+          </select>
+          <button type="button" class="button-secondary">Load</button>
+        </div>
+        
+        <!-- Search -->
+        <input type="text" placeholder="Search calendars..." class="input-field">
+        <div class="search-results">
+          <div class="demo-calendar-item">
+            <span>Work Calendar</span>
+            <button class="button-small">Add</button>
+          </div>
+          <div class="demo-calendar-item">
+            <span>Personal Calendar</span>
+            <button class="button-small">Add</button>
+          </div>
+          <div class="demo-calendar-item">
+            <span>Team Meetings</span>
+            <button class="button-small">Add</button>
+          </div>
+        </div>
+        
+        <!-- Selected -->
+        <div class="selected-list">
+          <h4 style="margin: 8px 0 4px 0;">Selected:</h4>
+          <ul>
+            <li>
+              <span>Work Calendar</span>
+              <button class="button-small button-danger">Remove</button>
+            </li>
+            <li>
+              <span>Personal Calendar</span>
+              <button class="button-small button-danger">Remove</button>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Save Set -->
+        <div class="action-row">
+          <input type="text" placeholder="Name for this set..." class="input-field">
+          <button type="button" class="button-secondary">Save</button>
+        </div>
+        
+        <div class="small-label">
+          Manage saved sets in <a href="#">Options</a>.
+        </div>
+      </div>
+
+      <!-- Slot Finding Settings Section -->
+      <div class="card">
+        <h2>Find Slots Settings</h2>
+        
+        <div class="compact-form-row">
+          <div class="compact-form-group">
+            <label for="starting-date">Starting Date:</label>
+            <input type="date" id="starting-date" class="input-field" value="2025-04-16">
+          </div>
+
+          <div class="compact-form-group">
+            <label for="min-duration">Min Duration (min):</label>
+            <input type="number" id="min-duration" min="15" step="15" value="60" class="input-field">
+          </div>
+          
+          <div class="compact-form-group">
+            <label for="max-duration">Max Duration (min):</label>
+            <input type="number" id="max-duration" min="15" step="15" value="120" class="input-field">
+          </div>
+        </div>
+
+        <div class="compact-form-row">
+          <div class="compact-form-group">
+            <label for="required-slots">Required Slots:</label>
+            <input type="number" id="required-slots" min="1" value="3" class="input-field">
+          </div>
+
+          <div class="compact-form-group">
+            <label for="spread-days">Spread Over (days):</label>
+            <input type="number" id="spread-days" min="1" value="2" class="input-field">
+          </div>
+        </div>
+        
+        <button class="find-slots-btn">Find Available Slots</button>
+      </div>
+
+      <!-- Available Slots Section -->
+      <div class="card">
+        <h2>Available Slots</h2>
+        
+        <div class="select-all-container">
+          <input type="checkbox" id="select-all-slots">
+          <label for="select-all-slots">Select All</label>
+        </div>
+        
+        <div>
+          <div class="demo-slot-item">
+            <input type="checkbox">
+            <span>April 16, 2025 - 10:00 AM to 11:00 AM</span>
+          </div>
+          <div class="demo-slot-item">
+            <input type="checkbox">
+            <span>April 16, 2025 - 2:00 PM to 3:00 PM</span>
+          </div>
+          <div class="demo-slot-item">
+            <input type="checkbox">
+            <span>April 17, 2025 - 9:00 AM to 10:00 AM</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 12px;">
+          <div class="action-row">
+            <input type="text" placeholder="Enter base name for meetings" class="input-field">
+            <button>Book Selected</button>
+            <button class="button-secondary">Copy Selected</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message containers -->
+      <div class="success">Slots found successfully!</div>
+    </div>
+  </div>
+</body>
+</html>
