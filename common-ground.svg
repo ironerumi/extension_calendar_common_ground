@@ -1,0 +1,37 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded square background -->
+  <rect x="8" y="8" width="112" height="112" rx="16" fill="#2B87BA" />
+  
+  <!-- Calendar page -->
+  <rect x="24" y="24" width="80" height="80" rx="4" fill="#FFFFFF" />
+  
+  <!-- Calendar header -->
+  <rect x="24" y="24" width="80" height="16" rx="4" fill="#E6E6E6" />
+  
+  <!-- Calendar grid lines (horizontal) -->
+  <line x1="24" y1="56" x2="104" y2="56" stroke="#D0D0D0" stroke-width="2" />
+  <line x1="24" y1="72" x2="104" y2="72" stroke="#D0D0D0" stroke-width="2" />
+  <line x1="24" y1="88" x2="104" y2="88" stroke="#D0D0D0" stroke-width="2" />
+  
+  <!-- Calendar grid lines (vertical) -->
+  <line x1="40" y1="40" x2="40" y2="104" stroke="#D0D0D0" stroke-width="2" />
+  <line x1="56" y1="40" x2="56" y2="104" stroke="#D0D0D0" stroke-width="2" />
+  <line x1="72" y1="40" x2="72" y2="104" stroke="#D0D0D0" stroke-width="2" />
+  <line x1="88" y1="40" x2="88" y2="104" stroke="#D0D0D0" stroke-width="2" />
+  
+  <!-- Highlighted date (with accent color) -->
+  <rect x="56" y="72" width="16" height="16" fill="#FF9D3F" rx="2" />
+  
+  <!-- Clock circle -->
+  <circle cx="88" cy="40" r="18" fill="#FFFFFF" stroke="#2B87BA" stroke-width="2" />
+  
+  <!-- Clock face -->
+  <circle cx="88" cy="40" r="16" fill="#F3F3F3" />
+  
+  <!-- Clock center dot -->
+  <circle cx="88" cy="40" r="2" fill="#2B87BA" />
+  
+  <!-- Clock hands (10:10 position) -->
+  <line x1="88" y1="40" x2="82" y2="32" stroke="#2B87BA" stroke-width="2" stroke-linecap="round" /> <!-- Hour hand -->
+  <line x1="88" y1="40" x2="96" y2="32" stroke="#FF9D3F" stroke-width="2" stroke-linecap="round" /> <!-- Minute hand -->
+</svg>

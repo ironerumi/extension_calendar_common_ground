@@ -1,0 +1,254 @@
+/* Common styling for the Common Ground extension */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 16px;
+  color: #333;
+  min-width: 400px;
+}
+
+/* Header styling */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px; /* Add some space below the header */
+}
+
+.header h2 {
+  margin: 0; /* Remove default margin from h2 */
+  color: #1a73e8;
+}
+
+.settings-icon-link {
+  color: #5f6368; /* Icon color */
+  text-decoration: none;
+  display: flex; /* Helps center the SVG */
+  align-items: center;
+}
+
+.settings-icon-link:hover {
+  color: #1a73e8; /* Icon color on hover */
+}
+
+.settings-icon-link svg {
+  width: 20px; /* Adjust size as needed */
+  height: 20px;
+}
+
+h1, h2, h3 {
+  color: #1a73e8;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+input, select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+input[type="time"] {
+  min-width: 100px;
+}
+
+input[type="number"] {
+  width: 60px;
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+button {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background-color: #185abc;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background-color: #fff;
+  color: #1a73e8;
+  border: 1px solid #1a73e8;
+}
+
+.button-secondary:hover {
+  background-color: #f5f8ff;
+}
+
+.slots-container {
+  margin-top: 16px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.slot-item {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: flex-start; /* Changed from space-between */
+  align-items: center;
+  gap: 8px; /* Add some space between checkbox and label */
+}
+
+.slot-item:hover {
+  background-color: #f5f8ff;
+}
+
+.error {
+  color: #d32f2f;
+  background-color: #fbe9e7;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.success {
+  color: #388e3c;
+  background-color: #e8f5e9;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.loading:after {
+  content: " ";
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 3px solid #1a73e8;
+  border-color: #1a73e8 transparent #1a73e8 transparent;
+  animation: loading 1.2s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.calendar-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.weekday-selector {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.language-toggle {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 28px;
+  margin: 0 8px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #1a73e8;
+}
+
+input:focus + .toggle-slider {
+  box-shadow: 0 0 1px #1a73e8;
+}
+
+input:checked + .toggle-slider:before {
+  -webkit-transform: translateX(32px);
+  -ms-transform: translateX(32px);
+  transform: translateX(32px);
+}

@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Common Ground",
+  "version": "1.0",
+  "description": "Schedule meetings based on mutual calendar availability.",
+  "permissions": [
+    "identity",
+    "storage",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://www.googleapis.com/"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {},
+  "options_page": "options.html",
+  "default_locale": "ja",
+  "icons": {
+    "16": "common-ground-minimal.png",
+    "48": "common-ground-minimal.png",
+    "128": "common-ground.png"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "oauth2": {
+    "client_id": "994174978925-s986vvdnl6r5aqgi87e0e90kcli9a2bn.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/calendar.readonly",
+      "https://www.googleapis.com/auth/calendar.events"
+    ]
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtZ7SNG9vRUG7M2y9C0sOvnfbfMR1SHO9Sd02Hbx2eN6ztcBli8MQ/U6iKWSHLbR/j8SN0mIQzjl/ol5mNvSRPPpYNakT+Kej6qfQKYmKLMdTXZnGmBNY1pkmpIbC9lrOkIjTPEJ/YPE1JRQ/J2vUdi6a2VMypOJHeUg/FiWvQA2T5qjfMDwcHtl9yMV/TsACpvHx7kBDNIodVsHZO1wJQh/RmXXmvFDrWcmAGwpFlTFY0tM7lfk5vAJg+OKDfwn/U7+o7Qtp90xUljwDwWycwkVYxs7qoSa4GOyQnI4+P3RkYZbjNsBeMVnL00LlqSnKtz7AcQR1AZxnIZcgRQIDAQAB"
+}

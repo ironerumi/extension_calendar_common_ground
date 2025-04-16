@@ -1,0 +1,158 @@
+{
+  "extensionName": {
+    "message": "Common Ground"
+  },
+  "extensionDescription": {
+    "message": "Schedule meetings based on mutual calendar availability."
+  },
+  "slotFormat": {
+    "message": "{date}({weekday}) {startTime} ~ {endTime}"
+  },
+  "findAvailableSlots": {
+    "message": "Find Available Slots"
+  },
+  "bookMeeting": {
+    "message": "Book Meeting"
+  },
+  "recalculateSlots": {
+    "message": "Recalculate Slots"
+  },
+  "cancelBookedSlot": {
+    "message": "Cancel Booked Slot"
+  },
+  "availableFrom": {
+    "message": "Available From"
+  },
+  "availableUntil": {
+    "message": "Available Until"
+  },
+  "excludeTime": {
+    "message": "Exclude Time"
+  },
+  "minDuration": {
+    "message": "Minimum Duration (minutes)"
+  },
+  "requiredSlots": {
+    "message": "Required Number of Slots"
+  },
+  "spreadDays": {
+    "message": "Spread Over (days)"
+  },
+  "selectCalendars": {
+    "message": "Select Calendars"
+  },
+  "selectDays": {
+    "message": "Select Days"
+  },
+  "monday": {
+    "message": "Monday"
+  },
+  "tuesday": {
+    "message": "Tuesday"
+  },
+  "wednesday": {
+    "message": "Wednesday"
+  },
+  "thursday": {
+    "message": "Thursday"
+  },
+  "friday": {
+    "message": "Friday"
+  },
+  "saturday": {
+    "message": "Saturday"
+  },
+  "sunday": {
+    "message": "Sunday"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "language": {
+    "message": "Language"
+  },
+  "meetingName": {
+    "message": "Meeting Name"
+  },
+  "startingDate": {
+    "message": "Starting Date"
+  },
+  "error": {
+    "message": "Error"
+  },
+  "success": {
+    "message": "Success"
+  },
+  "loading": {
+    "message": "Loading..."
+  },
+  "noSlotsFound": {
+    "message": "No available slots found. Try adjusting your settings."
+  },
+  "authRequiredMessage": {
+    "message": "Please authenticate with Google Calendar to use this extension."
+  },
+  "authenticate": {
+    "message": "Authenticate"
+  },
+  "languageEnglish": {
+    "message": "English"
+  },
+  "languageJapanese": {
+    "message": "Japanese"
+  },
+  "advancedSettings": {
+    "message": "Advanced Settings"
+  },
+  "availableSlots": {
+    "message": "Available Slots"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "copySlots": {
+    "message": "Copy Slots to Clipboard"
+  },
+  "authFailedError": {
+      "message": "Authentication failed"
+  },
+  "noCalendarsFound": {
+      "message": "No calendars found."
+  },
+  "loadCalendarsError": {
+      "message": "Failed to load calendars"
+  },
+  "selectCalendarError": {
+      "message": "Please select at least one calendar."
+  },
+  "fillFieldsError": {
+      "message": "Please fill in all required fields with valid values."
+  },
+  "findSlotsError": {
+      "message": "Failed to find slots"
+  },
+  "selectSlot": {
+      "message": "Select"
+  },
+  "noSlotSelectedError": {
+      "message": "No slot selected."
+  },
+  "enterMeetingNameError": {
+      "message": "Please enter a meeting name."
+  },
+  "meetingBookedSuccess": {
+      "message": "Meeting booked successfully!"
+  },
+  "bookMeetingError": {
+      "message": "Failed to book meeting"
+  },
+  "slotsCopiedSuccess": {
+      "message": "Slots copied to clipboard!"
+  },
+  "copySlotsError": {
+      "message": "Failed to copy slots"
+  },
+  "weekdays": {
+    "message": "Sun,Mon,Tue,Wed,Thu,Fri,Sat"
+  }
+}

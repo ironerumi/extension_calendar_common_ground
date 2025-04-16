@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Common Ground Options</title>
+  <link rel="stylesheet" href="common.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Common Ground Options</h1>
+    
+    <form id="options-form">
+      
+      <div class="form-group">
+        <h2>Weekday Selection</h2>
+        <p>Select days when you're available for meetings:</p>
+        <div class="weekday-selector">
+          <div>
+            <input type="checkbox" id="day-0" class="day-checkbox">
+            <label for="day-0">Sunday</label>
+          </div>
+          <div>
+            <input type="checkbox" id="day-1" class="day-checkbox">
+            <label for="day-1">Monday</label>
+          </div>
+          <div>
+            <input type="checkbox" id="day-2" class="day-checkbox">
+            <label for="day-2">Tuesday</label>
+          </div>
+          <div>
+            <input type="checkbox" id="day-3" class="day-checkbox">
+            <label for="day-3">Wednesday</label>
+          </div>
+          <div>
+            <input type="checkbox" id="day-4" class="day-checkbox">
+            <label for="day-4">Thursday</label>
+          </div>
+          <div>
+            <input type="checkbox" id="day-5" class="day-checkbox">
+            <label for="day-5">Friday</label>
+          </div>
+          <div>
+            <input type="checkbox" id="day-6" class="day-checkbox">
+            <label for="day-6">Saturday</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <h2>General Time Settings</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="available-from">Available From:</label>
+            <input type="time" id="available-from" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="available-until">Available Until:</label>
+            <input type="time" id="available-until" required>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <h2>Exclusion Periods</h2>
+        <p>Specify regular time periods to exclude (e.g., lunch breaks):</p>
+        <div id="exclusions-container">
+          <!-- Exclusion items will be added here -->
+        </div>
+        <button type="button" id="add-exclusion" class="button-secondary">Add Exclusion</button>
+      </div>
+      
+      <div class="form-group">
+        <h2>Availability Text Style</h2>
+        <div class="language-toggle">
+          <span>English</span>
+          <label class="toggle">
+            <input type="checkbox" id="language-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+          <span>日本語</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <button type="submit" id="save-button">Save Options</button>
+        <div id="status" class="success" style="display: none;"></div>
+      </div>
+    </form>
+  </div>
+  
+  <script type="module" src="options.js"></script>
+</body>
+</html>

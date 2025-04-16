@@ -1,0 +1,22 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded square background -->
+  <rect x="8" y="8" width="112" height="112" rx="18" fill="#2B87BA" />
+  
+  <!-- Super simplified calendar -->
+  <rect x="24" y="24" width="80" height="80" rx="6" fill="#FFFFFF" />
+  
+  <!-- Calendar header -->
+  <rect x="24" y="24" width="80" height="16" rx="6" fill="#FF9D3F" />
+  
+  <!-- Just two bold calendar lines to suggest structure -->
+  <line x1="24" y1="60" x2="104" y2="60" stroke="#2B87BA" stroke-width="6" />
+  <line x1="64" y1="40" x2="64" y2="104" stroke="#2B87BA" stroke-width="6" />
+  
+  <!-- One very bold highlighted day -->
+  <circle cx="84" cy="80" r="14" fill="#FF9D3F" />
+  
+  <!-- Simplified clock hand (just one prominent indicator) -->
+  <circle cx="44" cy="80" r="14" fill="#FFFFFF" stroke="#2B87BA" stroke-width="4" />
+  <line x1="44" y1="80" x2="44" y2="70" stroke="#FF9D3F" stroke-width="6" stroke-linecap="round" />
+  <line x1="44" y1="80" x2="52" y2="84" stroke="#2B87BA" stroke-width="6" stroke-linecap="round" />
+</svg>

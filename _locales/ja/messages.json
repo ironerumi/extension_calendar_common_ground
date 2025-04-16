@@ -1,0 +1,158 @@
+{
+  "extensionName": {
+    "message": "ミューチュアル スケジューラー"
+  },
+  "extensionDescription": {
+    "message": "相互のカレンダーの空き状況に基づいて会議をスケジュールします。"
+  },
+  "slotFormat": {
+    "message": "{date}({weekday}) {startTime} ~ {endTime}"
+  },
+  "findAvailableSlots": {
+    "message": "空き枠を検索"
+  },
+  "bookMeeting": {
+    "message": "会議を予約"
+  },
+  "recalculateSlots": {
+    "message": "スロットを再計算"
+  },
+  "cancelBookedSlot": {
+    "message": "予約をキャンセル"
+  },
+  "availableFrom": {
+    "message": "開始時間"
+  },
+  "availableUntil": {
+    "message": "終了時間"
+  },
+  "excludeTime": {
+    "message": "除外時間"
+  },
+  "minDuration": {
+    "message": "最小時間（分）"
+  },
+  "requiredSlots": {
+    "message": "必要なスロット数"
+  },
+  "spreadDays": {
+    "message": "日数に分散"
+  },
+  "selectCalendars": {
+    "message": "カレンダーを選択"
+  },
+  "selectDays": {
+    "message": "曜日を選択"
+  },
+  "monday": {
+    "message": "月曜日"
+  },
+  "tuesday": {
+    "message": "火曜日"
+  },
+  "wednesday": {
+    "message": "水曜日"
+  },
+  "thursday": {
+    "message": "木曜日"
+  },
+  "friday": {
+    "message": "金曜日"
+  },
+  "saturday": {
+    "message": "土曜日"
+  },
+  "sunday": {
+    "message": "日曜日"
+  },
+  "save": {
+    "message": "保存"
+  },
+  "language": {
+    "message": "言語"
+  },
+  "meetingName": {
+    "message": "会議名"
+  },
+  "startingDate": {
+    "message": "開始日"
+  },
+  "error": {
+    "message": "エラー"
+  },
+  "success": {
+    "message": "成功"
+  },
+  "loading": {
+    "message": "読み込み中..."
+  },
+  "noSlotsFound": {
+    "message": "利用可能なスロットが見つかりません。設定を調整してみてください。"
+  },
+  "authRequiredMessage": {
+    "message": "この拡張機能を使用するには、Googleカレンダーで認証してください。"
+  },
+  "authenticate": {
+    "message": "認証する"
+  },
+  "languageEnglish": {
+    "message": "英語"
+  },
+  "languageJapanese": {
+    "message": "日本語"
+  },
+  "advancedSettings": {
+    "message": "詳細設定"
+  },
+  "availableSlots": {
+    "message": "利用可能なスロット"
+  },
+  "cancel": {
+    "message": "キャンセル"
+  },
+  "copySlots": {
+    "message": "スロットをクリップボードにコピー"
+  },
+  "authFailedError": {
+      "message": "認証に失敗しました"
+  },
+  "noCalendarsFound": {
+      "message": "カレンダーが見つかりません。"
+  },
+  "loadCalendarsError": {
+      "message": "カレンダーの読み込みに失敗しました"
+  },
+  "selectCalendarError": {
+      "message": "少なくとも1つのカレンダーを選択してください。"
+  },
+  "fillFieldsError": {
+      "message": "すべての必須フィールドに有効な値を入力してください。"
+  },
+  "findSlotsError": {
+      "message": "スロットの検索に失敗しました"
+  },
+  "selectSlot": {
+      "message": "選択"
+  },
+  "noSlotSelectedError": {
+      "message": "スロットが選択されていません。"
+  },
+  "enterMeetingNameError": {
+      "message": "会議名を入力してください。"
+  },
+  "meetingBookedSuccess": {
+      "message": "会議が正常に予約されました！"
+  },
+  "bookMeetingError": {
+      "message": "会議の予約に失敗しました"
+  },
+  "slotsCopiedSuccess": {
+      "message": "スロットがクリップボードにコピーされました！"
+  },
+  "copySlotsError": {
+      "message": "スロットのコピーに失敗しました"
+  },
+  "weekdays": {
+    "message": "日,月,火,水,木,金,土"
+  }
+}

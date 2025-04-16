@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Common Ground</title>
+  <link rel="stylesheet" href="common.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Common Ground</h2>
+      <a href="#" id="open-options-icon" class="settings-icon-link" title="Advanced Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px">
+          <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81 c-0.04-0.24-0.24-0.41-0.48-0.41H9.08c-0.24,0-0.43,0.17-0.47,0.41L8.28,5.22C7.69,5.46,7.16,5.78,6.66,6.16L4.27,5.2 c-0.22-0.08-0.47,0-0.59,0.22L1.76,8.74c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C3.88,11.36,3.86,11.68,3.86,12 c0,0.32,0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22 l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.33,2.41c0.04,0.24,0.24,0.41,0.48,0.41h4.84c0.24,0,0.44-0.17,0.47-0.41 l0.33-2.41c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32 c0.12-0.2,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6 S13.98,15.6,12,15.6z"/>
+        </svg>
+      </a>
+    </div>
+
+    <div id="auth-required" style="display: none;">
+      <p>Please authenticate with Google Calendar to use this extension.</p>
+      <button id="auth-button">Authenticate</button>
+    </div>
+
+    <div id="main-content" style="display: none;">
+      <div class="form-group">
+        <label for="calendar-select">Select Calendars:</label>
+        <div class="calendar-list" id="calendar-list">
+          <div class="loading" id="calendar-loading"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="starting-date">Starting Date:</label>
+          <input type="date" id="starting-date">
+        </div>
+
+        <div class="form-group">
+          <label for="min-duration">Min Duration (min):</label>
+          <input type="number" id="min-duration" min="15" step="15" value="60">
+        </div>
+        <div class="form-group">
+          <label for="max-duration">Max Duration (min):</label>
+          <input type="number" id="max-duration" min="15" step="15" value="120">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="required-slots">Required Slots:</label>
+          <input type="number" id="required-slots" min="1" value="3">
+        </div>
+
+        <div class="form-group">
+          <label for="spread-days">Spread Over (days):</label>
+          <input type="number" id="spread-days" min="1" value="2">
+        </div>
+      </div>
+
+      <button id="find-slots-button">Find Available Slots</button>
+
+      <!-- Advanced settings link moved to header -->
+
+      <!-- Messages moved to the bottom -->
+
+      <div id="slots-container" class="slots-container" style="display: none;">
+        <h3>Available Slots</h3>
+        <div class="select-all-container">
+          <input type="checkbox" id="select-all-slots">
+          <label for="select-all-slots">Select All</label>
+        </div>
+        <div id="slots-list"></div>
+
+        <div id="bulk-booking-section" style="display: none;">
+          <div class="form-group">
+            <label for="meeting-name">Meeting Name:</label>
+            <input type="text" id="meeting-name" placeholder="Enter base name for meetings">
+          </div>
+          <button id="book-meeting-button">Book Selected Slots</button>
+          <!-- Copy button moved into the same div -->
+          <button id="copy-slots-button" style="margin-left: 10px;">Copy Selected Slots</button>
+        </div>
+
+        <!-- Removed separate copy-slots-container -->
+      </div>
+
+      <!-- Message containers moved here -->
+      <div id="error-container" class="error" style="display: none; margin-top: 15px;"></div>
+      <div id="success-container" class="success" style="display: none; margin-top: 15px;"></div>
+    </div>
+  </div>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
