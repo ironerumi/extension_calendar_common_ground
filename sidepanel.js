@@ -65,10 +65,9 @@ async function initialize() {
     const syncData = await chrome.storage.sync.get([
       'language', 'availableFrom', 'availableUntil', 'exclusions', 'selectedDays',
       'startingDate', 'minDuration', 'maxDuration', 'numSlots', 'spreadDays'
-      // Note: We DO NOT load 'selectedCalendarIds' anymore for this UI
     ]);
 
-    // Update general settings and language
+    // Update general settings and language from sync storage
     if (syncData) {
       settings = { ...settings, ...syncData };
       currentLanguage = syncData.language || 'en';
@@ -84,15 +83,15 @@ async function initialize() {
     // Load saved calendar sets from local storage
     const localData = await chrome.storage.local.get(['savedCalendarSets']);
     savedCalendarSets = localData.savedCalendarSets || [];
-    populateLoadDropdown(); // Populate the dropdown
+    populateLoadDropdown();
 
-    // Try to get auth token and load all calendars for searching
+    // Try to get auth token and load calendars
     try {
       await chrome.runtime.sendMessage({ action: 'getAuthToken', interactive: false });
       showMainContent();
-      await fetchAndPrepareCalendars(); // Fetch all calendars and set initial selection
+      await fetchAndPrepareCalendars();
     } catch (error) {
-      showAuthRequired(); // Show auth UI if token not available/error
+      showAuthRequired(); // Show auth UI if token failed
     }
 
     // Set up event listeners
@@ -128,12 +127,11 @@ async function fetchAndPrepareCalendars() {
         if (primaryCalendar) {
             selectedCalendars.push({ id: primaryCalendar.id, summary: primaryCalendar.summary });
         }
-        renderSelectedCalendars(); // Initial render of selected list
+        renderSelectedCalendars();
 
     } catch (error) {
         showError('Failed to fetch calendars: ' + (error.message || 'Auth issue?'));
-        // Disable calendar search/select functionality?
-        calendarSearchInput.disabled = true;
+        calendarSearchInput.disabled = true; // Disable search if fetch fails
     }
 }
 
@@ -147,9 +145,9 @@ function setupEventListeners() {
     try {
       await chrome.runtime.sendMessage({ action: 'getAuthToken', interactive: true });
       showMainContent();
-      await fetchAndPrepareCalendars(); // Fetch calendars after successful auth
-      calendarSearchInput.disabled = false; // Re-enable search
-      // Reload saved sets and dropdown too
+      await fetchAndPrepareCalendars();
+      calendarSearchInput.disabled = false;
+      // Reload saved sets and dropdown after auth
       const localData = await chrome.storage.local.get(['savedCalendarSets']);
       savedCalendarSets = localData.savedCalendarSets || [];
       populateLoadDropdown();
@@ -174,10 +172,10 @@ function setupEventListeners() {
   selectAllCheckbox?.addEventListener('change', handleSelectAllChange);
 
   // --- Options Page Links ---
-  openOptionsIcon?.addEventListener('click', () => { // Header icon
+  openOptionsIcon?.addEventListener('click', () => {
     chrome.runtime.openOptionsPage();
   });
-  openOptionsLinkAlt?.addEventListener('click', (e) => { // Link under calendar section
+  openOptionsLinkAlt?.addEventListener('click', (e) => {
     e.preventDefault();
     chrome.runtime.openOptionsPage();
   });
@@ -267,7 +265,8 @@ function renderSelectedCalendars() {
     if (!selectedCalendarsList) return;
     selectedCalendarsList.innerHTML = ''; // Clear current list
     if (selectedCalendars.length === 0) {
-        selectedCalendarsList.innerHTML = '<li><i>Primary calendar will be used.</i></li>'; // Placeholder maybe?
+        // Show placeholder if no calendars are selected
+        selectedCalendarsList.innerHTML = '<li><i>Primary calendar will be used if none selected.</i></li>';
     } else {
         selectedCalendars.forEach(cal => {
             const li = document.createElement('li');
@@ -296,7 +295,7 @@ function populateLoadDropdown() {
     loadSetDropdown.innerHTML = '<option value="">-- Select a set --</option>'; // Clear and add default
     savedCalendarSets.forEach((set, index) => {
         const option = document.createElement('option');
-        option.value = index.toString(); // Use index as value
+        option.value = index.toString();
         option.textContent = set.name;
         loadSetDropdown.appendChild(option);
     });
@@ -319,26 +318,27 @@ async function handleSaveSet() {
 
     const newSet = {
         name: setName,
-        calendars: structuredClone(selectedCalendars) // Deep copy
+        calendars: structuredClone(selectedCalendars) // Deep copy to prevent mutation
     };
 
     const existingIndex = savedCalendarSets.findIndex(set => set.name === setName);
     let message = '';
     if (existingIndex !== -1) {
-        savedCalendarSets[existingIndex] = newSet; // Overwrite
+        savedCalendarSets[existingIndex] = newSet; // Overwrite existing set
         message = `Set "${setName}" updated.`;
     } else {
-        savedCalendarSets.push(newSet); // Add new
+        savedCalendarSets.push(newSet); // Add as new set
+        // Limit the number of saved sets
         if (savedCalendarSets.length > 10) {
-            savedCalendarSets.shift(); // Limit to 10
+            savedCalendarSets.shift(); // Remove the oldest set
         }
         message = `Set "${setName}" saved.`;
     }
 
     try {
         await chrome.storage.local.set({ savedCalendarSets });
-        saveSetNameInput.value = ''; // Clear input
-        populateLoadDropdown(); // Update dropdown
+        saveSetNameInput.value = '';
+        populateLoadDropdown();
         showStatus(message);
     } catch (error) {
         console.error('Failed to save calendar set:', error);
@@ -359,13 +359,13 @@ function handleLoadSet() {
 
     const setToLoad = savedCalendarSets[parseInt(selectedIndex, 10)];
     if (setToLoad) {
-        selectedCalendars = structuredClone(setToLoad.calendars); // Update state
-        renderSelectedCalendars(); // Update UI
+        selectedCalendars = structuredClone(setToLoad.calendars);
+        renderSelectedCalendars();
         showStatus(`Set "${setToLoad.name}" loaded.`);
     } else {
         showStatus('Could not find the selected set.', false);
     }
-    loadSetDropdown.value = ""; // Reset dropdown
+    loadSetDropdown.value = ""; // Reset dropdown selection
 }
 
 
@@ -382,9 +382,8 @@ async function findSlots() {
     successContainer.style.display = 'none';
     selectedSlotIndices = [];
 
-    // Use the selectedCalendars state from THIS script
+    // Ensure at least one calendar is selected
     if (selectedCalendars.length === 0) {
-      // Maybe try using primary if none selected? Or show clearer error.
       showError('Please select at least one calendar.');
       return;
     }
@@ -413,13 +412,12 @@ async function findSlots() {
     const syncSettingsData = await chrome.storage.sync.get([
       'availableFrom', 'availableUntil', 'exclusions', 'selectedDays'
     ]);
-    // Update local settings object if needed
     settings = { ...settings, ...syncSettingsData };
 
-    // Prepare settings for the slot finder algorithm
+    // Prepare settings object for the slot finder function
     const currentSlotSettings = {
       startDate,
-      numDays: 14, // Keep search range constant for now
+      numDays: 14, // Search within a 14-day range
       availableFrom: settings.availableFrom,
       availableUntil: settings.availableUntil,
       exclusions: settings.exclusions,
@@ -456,7 +454,7 @@ async function findSlots() {
     }
 
     availableSlots = await findAvailableSlots(currentSlotSettings, allEvents);
-    renderSlots(availableSlots); // Render results
+    renderSlots(availableSlots);
 
     findSlotsButton.disabled = false;
     findSlotsButton.textContent = 'Find Available Slots';
@@ -544,6 +542,10 @@ function handleSelectAllChange(event) {
 
 // Book meetings for all selected slots
 async function bookSelectedMeetings() {
+  // Read the latest language setting in case it changed, needed for copying
+  const syncData = await chrome.storage.sync.get(['language']);
+  const activeLanguage = syncData.language || 'en';
+
   try {
     if (selectedSlotIndices.length === 0) {
       showError('No slots selected.');
@@ -586,10 +588,14 @@ async function bookSelectedMeetings() {
       const offsetSign = offsetMinutes <= 0 ? '+' : '-';
       const offsetString = `${offsetSign}${offsetHours.toString().padStart(2, '0')}:${offsetMinsPart.toString().padStart(2, '0')}`;
 
+      // Prepare attendees list from selected calendars
+      const attendees = selectedCalendars.map(cal => ({ email: cal.id }));
+
       const eventDetails = {
         summary: meetingName,
         start: { dateTime: `${slot.date}T${minutesToTime(slot.start)}:00${offsetString}` },
-        end: { dateTime: `${slot.date}T${minutesToTime(slot.end)}:00${offsetString}` }
+        end: { dateTime: `${slot.date}T${minutesToTime(slot.end)}:00${offsetString}` },
+        attendees: attendees // Add attendees here
       };
 
       try {
@@ -608,7 +614,8 @@ async function bookSelectedMeetings() {
     if (successfulBookings > 0 && selectedSlotIndices.length > 0) {
       try {
         const selectedSlots = selectedSlotIndices.map(index => availableSlots[index]);
-        const slotTexts = selectedSlots.map(slot => formatSlot(slot, currentLanguage));
+        // Use the freshly read activeLanguage
+        const slotTexts = selectedSlots.map(slot => formatSlot(slot, activeLanguage));
         const textToCopy = slotTexts.join('\n');
         await navigator.clipboard.writeText(textToCopy);
         copySuccess = true;
@@ -629,7 +636,7 @@ async function bookSelectedMeetings() {
 
     meetingNameInput.value = '';
     updateBulkActionsVisibility();
-    // Do not automatically refresh slots
+    // Note: Slots are not automatically refreshed after booking
 
   } catch (error) {
     showError('Failed to book meetings: ' + (error.message || 'Unknown error'));
@@ -639,11 +646,15 @@ async function bookSelectedMeetings() {
 }
 
 // Copy selected slots to clipboard as text
-function copySelectedSlots() {
+async function copySelectedSlots() {
   if (selectedSlotIndices.length === 0) return;
 
+  // Read the latest language setting to format correctly
+  const syncData = await chrome.storage.sync.get(['language']);
+  const activeLanguage = syncData.language || 'en';
+
   const selectedSlots = selectedSlotIndices.map(index => availableSlots[index]);
-  const slotTexts = selectedSlots.map(slot => formatSlot(slot, currentLanguage));
+  const slotTexts = selectedSlots.map(slot => formatSlot(slot, activeLanguage));
   const textToCopy = slotTexts.join('\n');
 
   navigator.clipboard.writeText(textToCopy).then(() => {

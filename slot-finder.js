@@ -142,43 +142,36 @@ function filterByMinDuration(availableBlocks, minDuration) {
  * @param {number} minDuration - Minimum duration in minutes
  * @param {number} maxDuration - Maximum duration in minutes
  * @param {number} numRequired - Number of slots required
- * @param {number} spreadDays - Required spread over days
+ * @param {number} spreadDays - Required spread over days (minimum number of unique days to use if possible)
  * @returns {Array} Selected slots, attempting to spread them out and capped by maxDuration.
  */
 function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, spreadDays) {
   // 1. Filter by minimum duration first
   const validBlocks = filterByMinDuration(availableBlocks, minDuration);
 
-  // Helper function to adjust slot duration based on min/max constraints
+  // Helper function to adjust slot duration based on min/max constraints and start time snapping
   const adjustSlotDuration = (block) => {
     let start = block.start;
     let end = block.end;
-    let originalDuration = end - start;
 
-    // Snap start UP to nearest 30 mins *only if specified* (current logic does this)
-    // Let's keep the start time adjustment for now, assuming it's desired.
+    // Optional: Snap start UP to nearest 30 mins
     if (start % 30 !== 0) {
-        const originalStart = start;
-        start = start + (30 - (start % 30));
-        console.log(`Adjusted slot start from ${originalStart} to ${start}`);
+      start = start + (30 - (start % 30));
     }
 
-    // Calculate duration *after* potential start adjustment
     let adjustedDuration = end - start;
 
     // Check if still valid after start adjustment
     if (adjustedDuration < minDuration) {
-        console.log(`Slot on ${block.date} from ${block.start} to ${block.end} too short after snapping start time up.`);
-        return null; // Invalid slot
+      return null; // Invalid slot
     }
 
     // Cap the duration at maxDuration
     const finalDuration = Math.min(adjustedDuration, maxDuration);
 
-    // Ensure final duration is still >= minDuration (it should be, but double-check)
+    // Ensure final duration is still >= minDuration
     if (finalDuration < minDuration) {
-        console.log(`Slot on ${block.date} became too short after maxDuration capping.`);
-        return null; // Invalid slot
+      return null; // Invalid slot
     }
 
     // Calculate the final end time
@@ -188,79 +181,77 @@ function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, 
     return createTimeBlock(block.date, start, finalEnd);
   };
 
+  // 2. Adjust all valid blocks first
+  const adjustedValidBlocks = validBlocks.map(adjustSlotDuration).filter(slot => slot !== null);
 
-  // 2. Handle case where not enough valid blocks are found initially
-  if (validBlocks.length < numRequired) {
-    console.warn(`calculateSlots: Only ${validBlocks.length} blocks meet minDuration (${minDuration}). Returning those (adjusted).`);
-    // Adjust the duration of the few slots we found
-    return validBlocks.map(adjustSlotDuration).filter(slot => slot !== null);
+  // 3. Handle case where not enough valid blocks are found even after adjustment
+  if (adjustedValidBlocks.length < numRequired) {
+    // Not enough blocks meet the basic criteria, return what we have.
+    return adjustedValidBlocks;
   }
 
-  // Group valid blocks by date
-  const blocksByDate = validBlocks.reduce((acc, block) => {
+  // 4. Prepare for spreading: Group adjusted blocks by date
+  const blocksByDate = adjustedValidBlocks.reduce((acc, block) => {
     (acc[block.date] = acc[block.date] || []).push(block);
     return acc;
   }, {});
-
   const availableDates = Object.keys(blocksByDate).sort();
 
-  // 3. Check if spread is possible based on unique dates
-  if (availableDates.length < spreadDays && availableDates.length < numRequired) {
-      // If we can't meet spread and don't even have enough unique days for numRequired slots,
-      // it implies we might need multiple slots from the same day anyway.
-      // Fallback to taking the first `numRequired` slots, adjusted.
-      console.warn(`calculateSlots: Not enough unique days (${availableDates.length}) for spread (${spreadDays}) or quantity (${numRequired}). Returning first ${numRequired} valid blocks (adjusted).`);
-      return validBlocks.slice(0, numRequired).map(adjustSlotDuration).filter(slot => slot !== null);
-  }
-  // If availableDates.length >= spreadDays, spread logic can proceed.
-  // If availableDates.length < spreadDays BUT >= numRequired, spread logic might still work partially, or fallback later.
-
-  // --- Attempt to spread slots ---
   const result = [];
+  const slotsAdded = new Set(); // Keep track of added slots (using a unique key)
   const datesUsed = new Set();
-  // Target slots per day, but allow flexibility if needed
-  const slotsPerDayTarget = Math.ceil(numRequired / spreadDays);
 
-  // Iterate through ALL available dates
+  // --- Pass 1: Prioritize Spreading ---
+  // Attempt to select one slot per day until the spread target or total required is met.
   for (const date of availableDates) {
     if (result.length >= numRequired) break; // Stop if we have enough slots total
+    if (datesUsed.size >= spreadDays && spreadDays > 0) { // Stop adding *new* dates if spread target met
+         // However, we might still need more slots than spreadDays, so don't break the outer loop yet.
+         // Let Pass 2 handle filling remaining slots if needed.
+    }
 
     const blocksForDay = blocksByDate[date].sort((a, b) => a.start - b.start);
-    let slotsAddedThisDay = 0;
 
-    for (const block of blocksForDay) {
-      if (result.length >= numRequired) break; // Stop inner loop if total required is met
+    // Try to add the first available block from this day if the date isn't used yet OR we need more unique dates
+    if (!datesUsed.has(date) || datesUsed.size < spreadDays) {
+        for (const block of blocksForDay) {
+             const slotKey = `${block.date}-${block.start}-${block.end}`;
+             if (!slotsAdded.has(slotKey)) { // Ensure we don't add the exact same slot twice across passes
+                  result.push(block);
+                  slotsAdded.add(slotKey);
+                  datesUsed.add(date);
+                  if (result.length >= numRequired) break; // Check if required number reached
+                  break; // Only take one slot per date in this pass to maximize spread initially
+              }
+        }
+    }
+     if (result.length >= numRequired) break;
+  }
 
-      // Add slot based on spread logic
-      if (slotsAddedThisDay < slotsPerDayTarget || datesUsed.size < spreadDays) {
-          // Apply adjustments (start time snap, min/max duration cap)
-          const finalSlot = adjustSlotDuration(block);
+  // --- Pass 2: Fill Remaining Slots ---
+  // If Pass 1 didn't find enough slots, fill the rest chronologically.
+  if (result.length < numRequired) {
+    // Iterate through all *adjusted* valid blocks, sorted chronologically
+    const sortedAllAdjustedBlocks = adjustedValidBlocks.sort((a, b) => {
+        if (a.date < b.date) return -1;
+        if (a.date > b.date) return 1;
+        return a.start - b.start;
+    });
 
-          if (finalSlot) {
-              result.push(finalSlot);
-              datesUsed.add(date);
-              slotsAddedThisDay++;
-          }
-      } else {
-          // If we've hit the target for this day AND we've already used enough unique days,
-          // we can skip remaining blocks for this day to encourage spreading.
-          if (datesUsed.size >= spreadDays) {
-              break; // Stop processing this day
-          }
-          // Otherwise, continue checking blocks on this day in case we need more slots later and can't find them on other days.
-      }
+    for (const block of sortedAllAdjustedBlocks) {
+        if (result.length >= numRequired) break; // Stop if we have enough slots
+
+        const slotKey = `${block.date}-${block.start}-${block.end}`;
+        if (!slotsAdded.has(slotKey)) { // Check if this slot wasn't already added in Pass 1
+            result.push(block);
+            slotsAdded.add(slotKey);
+            datesUsed.add(block.date); // Track date usage even in pass 2
+        }
     }
   }
 
-  // --- Final Check & Fallback ---
-  // If spread logic didn't yield enough slots, but enough valid blocks exist, fallback to first N.
-  if (result.length < numRequired && validBlocks.length >= numRequired) {
-       console.warn(`calculateSlots: Spread logic yielded ${result.length} slots, less than required ${numRequired}. Falling back to first ${numRequired} valid blocks (adjusted).`);
-       return validBlocks.slice(0, numRequired).map(adjustSlotDuration).filter(slot => slot !== null);
-  }
-
-  // Return the slots collected (already adjusted)
-  return result;
+  // Return the final list of slots, ensuring it doesn't exceed numRequired
+  return result.slice(0, numRequired);
 }
 
 
@@ -297,11 +288,11 @@ function eventsToBusyBlocks(events) {
         } else {
              // If end date is same as start date or more than one day later (multi-day all-day event)
              // For simplicity, let's make it cover the whole start day.
-             // A more complex solution would create blocks for each day.
-             endTime = 24 * 60;
-             console.warn("Multi-day all-day event detected, currently only blocking the start date:", event.summary);
-        }
-    }
+              // A more complex solution would create blocks for each day.
+              // For now, block the entire start day for simplicity.
+              endTime = 24 * 60;
+         }
+     }
 
     // Snap start time down to the nearest 30-minute interval
     startTime = startTime - (startTime % 30);
@@ -351,38 +342,19 @@ function formatSlot(slot, lang) {
   
   const startTime = minutesToTime(slot.start);
   const endTime = minutesToTime(slot.end);
-  
-  // Get weekday names based on language - using comma separated string from messages.json
-  // Get weekday names based on language - **FORCING FALLBACK**
-  const weekdayIndex = date.getDay(); // 0 (Sunday) to 6 (Saturday) - Keep only one declaration
+
+  const weekdayIndex = date.getDay(); // 0 (Sunday) to 6 (Saturday)
   let weekday;
-  // Force use of the fallback mechanism based on the 'lang' parameter
+  // Use hardcoded fallback for weekdays based on language
   const fallbackWeekdays = {
     en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    ja: ['日', '月', '火', '水', '木', '金', '土']
+    ja: ['日', '月', '火', '水', '木', '金', '土'],
   };
 
   // Ensure lang is valid or default to 'en'
-  const validLang = (lang === 'ja') ? 'ja' : 'en';
+  const validLang = lang === 'ja' ? 'ja' : 'en';
   weekday = fallbackWeekdays[validLang][weekdayIndex];
 
-  // --- Original code attempting i18n (commented out for debugging) ---
-  // if (chrome.i18n) {
-  //   try {
-  //     const weekdaysStr = chrome.i18n.getMessage('weekdays');
-  //     const weekdayNames = weekdaysStr.split(',');
-  //     weekday = weekdayNames[weekdayIndex];
-  //   } catch (error) {
-  //     // Fallback to hardcoded values if chrome.i18n fails
-  //     console.warn("formatSlot: Failed to get weekdays from i18n, using fallback. Error:", error);
-  //     weekday = fallbackWeekdays[validLang][weekdayIndex];
-  //   }
-  // } else {
-  //   // Fallback for when chrome.i18n is not available (e.g. during testing)
-  //   console.warn("formatSlot: chrome.i18n not available, using fallback.");
-  //   weekday = fallbackWeekdays[validLang][weekdayIndex];
-  // }
-  // --- End of original code ---
   return `${dateStr}(${weekday}) ${startTime} ~ ${endTime}`;
 }
 
@@ -393,18 +365,18 @@ function formatSlot(slot, lang) {
  * @param {Array} events - All events from selected calendars.
  * @returns {Promise<Array>} Available meeting slots.
  */
-async function findAvailableSlots(settings, events) { // Ensure maxDuration is in settings
+async function findAvailableSlots(settings, events) {
   const {
     startDate,
     numDays,
     availableFrom, // User's desired start time (e.g., "09:00")
-    availableUntil, // User's desired end time (e.g., "18:00")
-    exclusions, // User's exclusion periods (e.g., lunch)
-    selectedDays, // Days of the week user is available
+    availableUntil,
+    exclusions,
+    selectedDays,
     minDuration,
-    maxDuration, // Added maxDuration here
+    maxDuration,
     numSlots,
-    spreadDays
+    spreadDays,
   } = settings;
 
   const userAvailableStartMinutes = timeToMinutes(availableFrom);
@@ -482,7 +454,13 @@ async function findAvailableSlots(settings, events) { // Ensure maxDuration is i
   }
 
   // 6. Calculate the final slots using the refined available blocks and duration constraints
-  return calculateSlots(finalAvailableBlocksAcrossDays, minDuration, maxDuration, numSlots, spreadDays); // Pass maxDuration
+  return calculateSlots(
+    finalAvailableBlocksAcrossDays,
+    minDuration,
+    maxDuration,
+    numSlots,
+    spreadDays,
+  );
 }
 
 export {

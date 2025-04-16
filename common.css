@@ -112,10 +112,19 @@ h1, h2, h3 {
 }
 
 .compact-form-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  align-items: end;
+  display: flex; /* Use flexbox */
+  /* Removed justify-content: space-between; */
+  gap: 16px; /* Increased gap for more visual separation */
+  align-items: baseline; /* Changed from end to baseline for better input alignment */
+  flex-wrap: wrap; /* Allow wrapping */
+  margin-bottom: 12px;
+}
+
+/* Adjust child group width for flex layout */
+.compact-form-row .compact-form-group {
+  flex: 1; /* Each item takes equal available space */
+  min-width: 120px; /* Ensure a minimum width */
+  /* Removed flex-basis: auto and flex-grow: 1 */
 }
 
 label {
