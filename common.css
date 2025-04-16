@@ -252,3 +252,81 @@ input:checked + .toggle-slider:before {
   -ms-transform: translateX(32px);
   transform: translateX(32px);
 }
+
+/* --- Styles for Calendar Search & Saved Sets --- */
+
+.input-field {
+  width: 95%; /* Adjust width as needed */
+  margin-bottom: 8px;
+}
+
+.search-results {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.search-result-item {
+  padding: 6px 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: #f5f8ff;
+}
+
+.selected-list ul, .management-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+  max-height: 150px; /* Limit height */
+  overflow-y: auto;   /* Add scroll */
+  border: 1px solid #eee; /* Optional border */
+  border-radius: 4px;
+}
+
+.selected-list li, .management-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.selected-list li:last-child, .management-list li:last-child {
+  border-bottom: none;
+}
+
+.selected-list span, .management-list span {
+  flex-grow: 1;
+  margin-right: 8px;
+  word-break: break-all; /* Prevent long names from overflowing */
+}
+
+.button-small {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.button-danger {
+  background-color: #d32f2f; /* Red color for delete */
+  color: white;
+  border: none;
+}
+
+.button-danger:hover {
+  background-color: #b71c1c;
+}
+
+/* Ensure buttons in lists don't stretch */
+.selected-list button, .management-list button {
+  flex-shrink: 0;
+}

@@ -22,14 +22,80 @@
     </div>
 
     <div id="main-content" style="display: none;">
-      <div class="form-group">
-        <label for="calendar-select">Select Calendars:</label>
-        <div class="calendar-list" id="calendar-list">
-          <div class="loading" id="calendar-loading"></div>
+       <!-- Calendar Selection Section -->
+       <div class="form-group">
+        <h2>Select Calendars</h2>
+        <!-- Load Set -->
+        <div class="form-row" style="margin-bottom: 10px;">
+            <div class="form-group" style="flex-grow: 1;">
+                 <label for="load-set-dropdown">Load Saved Set:</label>
+                 <select id="load-set-dropdown" class="input-field">
+                   <option value="">-- Select a set --</option>
+                   <!-- Saved sets will be populated here -->
+                 </select>
+            </div>
+            <button type="button" id="load-set-button" class="button-secondary" style="align-self: flex-end;">Load Set</button>
         </div>
+        <!-- Search -->
+        <input type="text" id="calendar-search-input" placeholder="Search calendars..." class="input-field">
+        <div id="calendar-search-results" class="search-results">
+          <!-- Search results will appear here -->
+        </div>
+        <!-- Selected -->
+        <div id="selected-calendars-list" class="selected-list" style="margin-top: 10px;">
+          <h4>Selected:</h4>
+          <ul>
+            <!-- Selected calendars will appear here -->
+          </ul>
+        </div>
+        <!-- Save Set -->
+         <div class="form-row" style="margin-top: 10px;">
+            <div class="form-group" style="flex-grow: 1;">
+                <label for="save-set-name">Save current selection as:</label>
+                <input type="text" id="save-set-name" placeholder="Name for this set..." class="input-field">
+            </div>
+             <button type="button" id="save-set-button" class="button-secondary" style="align-self: flex-end;">Save Set</button>
+        </div>
+         <small>Manage saved sets in <a href="#" id="open-options-link-alt">Options</a>.</small>
       </div>
 
-      <div class="form-row">
+       <!-- Slot Finding Settings Section -->
+       <div class="form-group">
+           <h2>Find Slots Settings</h2>
+           <div class="form-row">
+                <div class="form-group">
+                  <label for="starting-date">Starting Date:</label>
+                  <input type="date" id="starting-date">
+                </div>
+
+                <div class="form-group">
+                  <label for="min-duration">Min Duration (min):</label>
+                  <input type="number" id="min-duration" min="15" step="15" value="60">
+                </div>
+                <div class="form-group">
+                  <label for="max-duration">Max Duration (min):</label>
+                  <input type="number" id="max-duration" min="15" step="15" value="120">
+                </div>
+            </div>
+
+           <div class="form-row">
+                <div class="form-group">
+                  <label for="required-slots">Required Slots:</label>
+                  <input type="number" id="required-slots" min="1" value="3">
+                </div>
+
+                <div class="form-group">
+                  <label for="spread-days">Spread Over (days):</label>
+                  <input type="number" id="spread-days" min="1" value="2">
+                </div>
+            </div>
+       </div>
+
+      <button id="find-slots-button">Find Available Slots</button>
+
+      <!-- Original form-row containing date/duration/etc. starts here -->
+      <!-- These elements are now moved into the "Find Slots Settings" section above -->
+      <!-- <div class="form-row">
         <div class="form-group">
           <label for="starting-date">Starting Date:</label>
           <input type="date" id="starting-date">
