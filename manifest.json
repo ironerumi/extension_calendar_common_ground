@@ -31,6 +31,5 @@
       "https://www.googleapis.com/auth/calendar.readonly",
       "https://www.googleapis.com/auth/calendar.events"
     ]
-  },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtZ7SNG9vRUG7M2y9C0sOvnfbfMR1SHO9Sd02Hbx2eN6ztcBli8MQ/U6iKWSHLbR/j8SN0mIQzjl/ol5mNvSRPPpYNakT+Kej6qfQKYmKLMdTXZnGmBNY1pkmpIbC9lrOkIjTPEJ/YPE1JRQ/J2vUdi6a2VMypOJHeUg/FiWvQA2T5qjfMDwcHtl9yMV/TsACpvHx7kBDNIodVsHZO1wJQh/RmXXmvFDrWcmAGwpFlTFY0tM7lfk5vAJg+OKDfwn/U7+o7Qtp90xUljwDwWycwkVYxs7qoSa4GOyQnI4+P3RkYZbjNsBeMVnL00LlqSnKtz7AcQR1AZxnIZcgRQIDAQAB"
+  }
 }
