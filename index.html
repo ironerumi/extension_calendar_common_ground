@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Common Ground - Smart Calendar Scheduler</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .header img {
+            max-width: 128px;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+        }
+        .cta-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #007aff;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover {
+            background-color: #005ecb;
+        }
+        .section {
+            margin-top: 30px;
+        }
+        .section h2 {
+            font-size: 1.8em;
+            border-bottom: 2px solid #007aff;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .feature {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #007aff;
+        }
+        .install-steps {
+            list-style: none;
+            padding-left: 0;
+        }
+        .install-steps li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 3px solid #007aff;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="common-ground.png" alt="Common Ground Logo">
+            <h1>Common Ground</h1>
+            <p>Smart Calendar Scheduler for Google Calendar</p>
+            <!-- <a href="https://chrome.google.com/webstore/your-extension-id" class="cta-button">Install on Chrome</a> -->
+        </div>
+
+        <div class="section">
+            <h2>Effortlessly schedule meetings that work for everyone.</h2>
+            <p>
+                Common Ground is the smart calendar scheduling extension that eliminates the back-and-forth of finding meeting times. By analyzing multiple Google Calendars simultaneously, it identifies optimal time slots that work for all participants, right in your browser.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <h3>Smart Calendar Analysis</h3>
+                    <p>Integrates seamlessly with Google Calendar to analyze multiple calendars, considering all event types and creating buffer zones around existing commitments.</p>
+                </div>
+                <div class="feature">
+                    <h3>Flexible Scheduling</h3>
+                    <p>Customize meeting duration, define working hours, and select specific workdays to fit your schedule perfectly.</p>
+                </div>
+                <div class="feature">
+                    <h3>Intelligent Time Finding</h3>
+                    <p>Finds mutual availability across all selected calendars, prioritizing earlier dates and aligning times to professional boundaries.</p>
+                </div>
+                <div class="feature">
+                    <h3>Bilingual Support</h3>
+                    <p>Switch between English and Japanese formatting with localized date/time display. Perfect for international teams.</p>
+                </div>
+                <div class="feature">
+                    <h3>Seamless Booking</h3>
+                    <p>Book meetings directly from suggested slots with custom names, automatically creating events in your primary calendar.</p>
+                </div>
+                <div class="feature">
+                    <h3>Privacy First</h3>
+                    <p>Uses secure Google OAuth 2.0 and processes all data locally in your browser. Your calendar information is never stored.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Installation & Setup (For Development)</h2>
+            <ol class="install-steps">
+                <li><strong>Clone the Repository:</strong><br>
+                    <code>git clone https://github.com/your-username/extension_calendar_common_ground.git</code>
+                </li>
+                <li><strong>Load the Extension in Chrome:</strong><br>
+                    Navigate to <code>chrome://extensions/</code>, enable "Developer mode", click "Load unpacked", and select the repository directory.
+                </li>
+                <li><strong>Grant Permissions:</strong><br>
+                    Click the extension icon and follow the OAuth flow to grant Google Calendar access.
+                </li>
+                <li><strong>Configure:</strong><br>
+                    Right-click the extension icon, select "Options", and set up your preferences.
+                </li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 Common Ground. Find the perfect meeting time, every time.</p>
+            <p><a href="docs/privacy_policy.md">Privacy Policy</a></p>
+        </div>
+    </div>
+</body>
+</html>

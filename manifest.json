@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Common Ground",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Schedule meetings based on mutual calendar availability.",
   "permissions": [
     "identity",
@@ -26,7 +26,7 @@
     "default_path": "sidepanel.html"
   },
   "oauth2": {
-    "client_id": "994174978925-s986vvdnl6r5aqgi87e0e90kcli9a2bn.apps.googleusercontent.com",
+    "client_id": "125334638917-gefkj840i7vu5ggu7tteb3ladurs143s.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/calendar.readonly",
       "https://www.googleapis.com/auth/calendar.events"
