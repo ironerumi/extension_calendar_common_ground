@@ -18,9 +18,11 @@ Common Ground is a Chrome extension that helps you schedule meetings efficiently
 
 ### 🎯 Intelligent Time Slot Finding
 - **Mutual Availability Detection**: Finds time slots that work for all selected calendars
-- **Buffer Zone Creation**: Automatically adds buffer time around existing meetings
+- **Chronological Prioritization**: Prioritizes earlier time slots within the same day for better scheduling efficiency
+- **Multi-Day Event Support**: Properly handles all-day and multi-day events (including "out of office" periods)
 - **Smart Time Alignment**: Aligns meeting times to :00 or :30 minute boundaries
-- **Priority-Based Selection**: Prioritizes earlier dates and optimal distribution
+- **Flexible Day Distribution**: Balances chronological preference with optional day spreading requirements
+- **30-Minute Time Snapping**: Automatically snaps event boundaries to 30-minute intervals for cleaner scheduling
 
 ### 🌐 Multi-Language Support
 - **Bilingual Output**: Switch between English and Japanese formatting

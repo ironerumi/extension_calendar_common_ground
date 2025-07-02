@@ -143,7 +143,7 @@ function filterByMinDuration(availableBlocks, minDuration) {
  * @param {number} maxDuration - Maximum duration in minutes
  * @param {number} numRequired - Number of slots required
  * @param {number} spreadDays - Required spread over days (minimum number of unique days to use if possible)
- * @returns {Array} Selected slots, attempting to spread them out and capped by maxDuration.
+ * @returns {Array} Selected slots, prioritizing chronological order over spreading.
  */
 function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, spreadDays) {
   // 1. Filter by minimum duration first
@@ -190,63 +190,68 @@ function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, 
     return adjustedValidBlocks;
   }
 
-  // 4. Prepare for spreading: Group adjusted blocks by date
-  const blocksByDate = adjustedValidBlocks.reduce((acc, block) => {
-    (acc[block.date] = acc[block.date] || []).push(block);
-    return acc;
-  }, {});
-  const availableDates = Object.keys(blocksByDate).sort();
+  // 4. Sort all blocks chronologically (date first, then start time)
+  const sortedAllAdjustedBlocks = adjustedValidBlocks.sort((a, b) => {
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
+    return a.start - b.start;
+  });
 
   const result = [];
   const slotsAdded = new Set(); // Keep track of added slots (using a unique key)
   const datesUsed = new Set();
 
-  // --- Pass 1: Prioritize Spreading ---
-  // Attempt to select one slot per day until the spread target or total required is met.
-  for (const date of availableDates) {
-    if (result.length >= numRequired) break; // Stop if we have enough slots total
-    if (datesUsed.size >= spreadDays && spreadDays > 0) { // Stop adding *new* dates if spread target met
-         // However, we might still need more slots than spreadDays, so don't break the outer loop yet.
-         // Let Pass 2 handle filling remaining slots if needed.
-    }
+  // --- Primary Strategy: Chronological Selection ---
+  // Select slots chronologically, but respect spreadDays as a constraint
+  for (const block of sortedAllAdjustedBlocks) {
+    if (result.length >= numRequired) break; // Stop if we have enough slots
 
-    const blocksForDay = blocksByDate[date].sort((a, b) => a.start - b.start);
+    const slotKey = `${block.date}-${block.start}-${block.end}`;
+    if (slotsAdded.has(slotKey)) continue; // Skip if already added
 
-    // Try to add the first available block from this day if the date isn't used yet OR we need more unique dates
-    if (!datesUsed.has(date) || datesUsed.size < spreadDays) {
-        for (const block of blocksForDay) {
-             const slotKey = `${block.date}-${block.start}-${block.end}`;
-             if (!slotsAdded.has(slotKey)) { // Ensure we don't add the exact same slot twice across passes
-                  result.push(block);
-                  slotsAdded.add(slotKey);
-                  datesUsed.add(date);
-                  if (result.length >= numRequired) break; // Check if required number reached
-                  break; // Only take one slot per date in this pass to maximize spread initially
-              }
-        }
+    // Check if we should add this slot based on spreading constraint
+    const wouldExceedSpreadDays = spreadDays > 0 && 
+                                  !datesUsed.has(block.date) && 
+                                  datesUsed.size >= spreadDays;
+
+    // If we haven't reached the spread limit, or this date is already used, add the slot
+    if (!wouldExceedSpreadDays || datesUsed.has(block.date)) {
+      result.push(block);
+      slotsAdded.add(slotKey);
+      datesUsed.add(block.date);
     }
-     if (result.length >= numRequired) break;
   }
 
-  // --- Pass 2: Fill Remaining Slots ---
-  // If Pass 1 didn't find enough slots, fill the rest chronologically.
-  if (result.length < numRequired) {
-    // Iterate through all *adjusted* valid blocks, sorted chronologically
-    const sortedAllAdjustedBlocks = adjustedValidBlocks.sort((a, b) => {
-        if (a.date < b.date) return -1;
-        if (a.date > b.date) return 1;
-        return a.start - b.start;
-    });
-
+  // --- Fallback Strategy: Force Spreading if Needed ---
+  // If we still need more slots and haven't met the spread requirement,
+  // force spreading to meet the minimum requirements
+  if (result.length < numRequired && spreadDays > 0 && datesUsed.size < spreadDays) {
+    // Group remaining blocks by date
+    const blocksByDate = {};
     for (const block of sortedAllAdjustedBlocks) {
-        if (result.length >= numRequired) break; // Stop if we have enough slots
+      const slotKey = `${block.date}-${block.start}-${block.end}`;
+      if (!slotsAdded.has(slotKey)) {
+        (blocksByDate[block.date] = blocksByDate[block.date] || []).push(block);
+      }
+    }
 
+    // Try to add one slot from each unused date until we meet requirements
+    const unusedDates = Object.keys(blocksByDate)
+                              .filter(date => !datesUsed.has(date))
+                              .sort();
+
+    for (const date of unusedDates) {
+      if (result.length >= numRequired) break;
+      
+      const blocksForDay = blocksByDate[date].sort((a, b) => a.start - b.start);
+      if (blocksForDay.length > 0) {
+        const block = blocksForDay[0]; // Take the earliest slot of the day
         const slotKey = `${block.date}-${block.start}-${block.end}`;
-        if (!slotsAdded.has(slotKey)) { // Check if this slot wasn't already added in Pass 1
-            result.push(block);
-            slotsAdded.add(slotKey);
-            datesUsed.add(block.date); // Track date usage even in pass 2
-        }
+        
+        result.push(block);
+        slotsAdded.add(slotKey);
+        datesUsed.add(block.date);
+      }
     }
   }
 
@@ -262,70 +267,57 @@ function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, 
  * @returns {Array} Busy time blocks
  */
 function eventsToBusyBlocks(events) {
-  return events.map(event => {
+  const busyBlocks = [];
+
+  for (const event of events) {
     const startDateTime = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
-    const endDateTime = new Date(event.end.dateTime || `${event.end.date}T00:00:00`); // Corrected end date handling for all-day
-    
-    // Use local date components to avoid timezone issues with just slicing ISO string
-    const year = startDateTime.getFullYear();
-    const month = (startDateTime.getMonth() + 1).toString().padStart(2, '0'); // JS months are 0-indexed
-    const day = startDateTime.getDate().toString().padStart(2, '0');
-    const date = `${year}-${month}-${day}`; // Correct local date
+    const endDateTime = new Date(event.end.dateTime || `${event.end.date}T00:00:00`);
 
-    let startTime = startDateTime.getHours() * 60 + startDateTime.getMinutes();
-    let endTime = endDateTime.getHours() * 60 + endDateTime.getMinutes();
-
-    // Handle all-day events correctly: they should end at the *start* of the end date
-    // If only date is provided (no dateTime), treat as 00:00 to 24:00 on the start date
+    // Handle all-day events and multi-day events
     if (event.start.date && !event.start.dateTime) {
-        startTime = 0;
-        // If end.date is the day after start.date, it means it ends at midnight of start.date
-        const startDateObj = new Date(event.start.date + 'T00:00:00'); // Ensure consistent parsing
-        const endDateObj = new Date(event.end.date + 'T00:00:00');
-        // Check if end date is exactly one day after start date
-        if (endDateObj.getTime() === startDateObj.getTime() + 24 * 60 * 60 * 1000) {
-             endTime = 24 * 60; // End of the start day
-        } else {
-             // If end date is same as start date or more than one day later (multi-day all-day event)
-             // For simplicity, let's make it cover the whole start day.
-              // A more complex solution would create blocks for each day.
-              // For now, block the entire start day for simplicity.
-              endTime = 24 * 60;
-         }
-     }
+      // This is an all-day event
+      const startDateObj = new Date(event.start.date + 'T00:00:00');
+      const endDateObj = new Date(event.end.date + 'T00:00:00');
+      
+      // Create busy blocks for each day the event spans
+      const currentDate = new Date(startDateObj);
+      while (currentDate < endDateObj) {
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const date = `${year}-${month}-${day}`;
+        
+        busyBlocks.push(createTimeBlock(date, 0, 24 * 60)); // Block the entire day
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    } else {
+      // This is a timed event
+      const year = startDateTime.getFullYear();
+      const month = (startDateTime.getMonth() + 1).toString().padStart(2, '0');
+      const day = startDateTime.getDate().toString().padStart(2, '0');
+      const date = `${year}-${month}-${day}`;
 
-    // Snap start time down to the nearest 30-minute interval
-    startTime = startTime - (startTime % 30);
+      let startTime = startDateTime.getHours() * 60 + startDateTime.getMinutes();
+      let endTime = endDateTime.getHours() * 60 + endDateTime.getMinutes();
 
-    // Snap end time up to the nearest 30-minute interval
-    if (endTime % 30 !== 0) {
-      endTime = endTime + (30 - (endTime % 30));
+      // Snap start time down to the nearest 30-minute interval
+      startTime = startTime - (startTime % 30);
+
+      // Snap end time up to the nearest 30-minute interval
+      if (endTime % 30 !== 0) {
+        endTime = endTime + (30 - (endTime % 30));
+      }
+
+      // Ensure snapped end time doesn't exceed the day boundary (1440 minutes)
+      endTime = Math.min(endTime, 24 * 60);
+
+      if (startTime < endTime) {
+        busyBlocks.push(createTimeBlock(date, startTime, endTime));
+      }
     }
+  }
 
-    // Ensure snapped end time doesn't exceed the day boundary (1440 minutes)
-    endTime = Math.min(endTime, 24 * 60);
-
-    // Ensure start and end don't overlap incorrectly after snapping
-    if (startTime >= endTime && (endDateTime.getTime() > startDateTime.getTime())) {
-       // If original event had duration but snapping made start>=end,
-       // ensure minimum 30min block if it crosses midnight weirdly,
-       // otherwise, this small gap is likely fully covered.
-       // For simplicity here, we'll just use the snapped values,
-       // potentially making the block cover the whole original if snapping caused overlap.
-       // A more robust solution might handle edge cases near midnight.
-       // Let's assume events are within a day for now. If start >= end, it means the snapped
-       // block might be invalid or cover a tiny original gap. Let's just ensure end is at least start + 30 if original end>start
-       if(endDateTime.getTime() > startDateTime.getTime()) {
-           endTime = startTime + 30; // Ensure minimum block if snapping overlapped.
-       } else {
-           endTime = startTime; // If original start/end were same, keep them same.
-       }
-       endTime = Math.min(endTime, 24 * 60); // Re-cap end time
-    }
-
-
-    return createTimeBlock(date, startTime, endTime);
-  });
+  return busyBlocks;
 }
 
 /**
