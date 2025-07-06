@@ -96,6 +96,7 @@
         </div>
         
         <button id="find-slots-button" class="find-slots-btn">Find Available Slots</button>
+        <div id="validation-warning" class="validation-warning" style="display: none;"></div>
       </div>
 
       <!-- Available Slots Section -->
@@ -110,10 +111,19 @@
         <div id="slots-list"></div>
 
         <div id="bulk-booking-section" style="display: none; margin-top: 12px;">
-          <div class="action-row">
-            <input type="text" id="meeting-name" placeholder="Enter base name for meetings" class="input-field">
-            <button id="book-meeting-button">Book Selected</button>
-            <button id="copy-slots-button" class="button-secondary">Copy Selected</button>
+          <div class="meeting-details-form">
+            <div class="form-row">
+              <label for="meeting-title">Title:</label>
+              <input type="text" id="meeting-title" placeholder="Enter meeting title" class="input-field">
+            </div>
+            <div class="form-row">
+              <label for="meeting-memo">Memo:</label>
+              <textarea id="meeting-memo" placeholder="Enter meeting memo (optional)" class="input-field memo-textarea" rows="2"></textarea>
+            </div>
+            <div class="action-row">
+              <button id="book-meeting-button">Book Selected</button>
+              <button id="copy-slots-button" class="button-secondary">Copy Selected</button>
+            </div>
           </div>
         </div>
       </div>

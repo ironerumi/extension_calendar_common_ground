@@ -13,6 +13,7 @@ const findSlotsButton = document.getElementById('find-slots-button');
 const openOptionsIcon = document.getElementById('open-options-icon');
 const errorContainer = document.getElementById('error-container');
 const successContainer = document.getElementById('success-container');
+const validationWarning = document.getElementById('validation-warning');
 
 // --- Calendar Selection UI Elements ---
 const calendarSearchInput = document.getElementById('calendar-search-input');
@@ -36,7 +37,8 @@ const slotsContainer = document.getElementById('slots-container');
 const slotsList = document.getElementById('slots-list');
 const selectAllCheckbox = document.getElementById('select-all-slots');
 const bulkBookingSection = document.getElementById('bulk-booking-section');
-const meetingNameInput = document.getElementById('meeting-name');
+const meetingTitleInput = document.getElementById('meeting-title');
+const meetingMemoInput = document.getElementById('meeting-memo');
 const bookMeetingButton = document.getElementById('book-meeting-button');
 const copySlotsButton = document.getElementById('copy-slots-button');
 
@@ -380,6 +382,7 @@ async function findSlots() {
     selectAllCheckbox.checked = false;
     errorContainer.style.display = 'none';
     successContainer.style.display = 'none';
+    validationWarning.style.display = 'none';
     selectedSlotIndices = [];
 
     // Ensure at least one calendar is selected
@@ -402,6 +405,13 @@ async function findSlots() {
     }
     if (maxDuration < minDuration) {
       showError('Maximum duration cannot be less than minimum duration.');
+      return;
+    }
+
+    // Check for impossible configuration: numSlots < spreadDays
+    if (numSlots < spreadDays) {
+      validationWarning.textContent = `⚠️ Impossible configuration: Cannot find ${numSlots} slots spread across ${spreadDays} days. Required slots must be greater than or equal to spread days.`;
+      validationWarning.style.display = 'block';
       return;
     }
 
@@ -519,9 +529,10 @@ function updateBulkActionsVisibility() {
   const hasSelection = selectedSlotIndices.length > 0;
   bulkBookingSection.style.display = hasSelection ? 'block' : 'none';
   if (hasSelection) {
-    meetingNameInput.focus();
+    meetingTitleInput.focus();
   } else {
-    meetingNameInput.value = '';
+    meetingTitleInput.value = '';
+    meetingMemoInput.value = '';
   }
 }
 
@@ -551,11 +562,13 @@ async function bookSelectedMeetings() {
       showError('No slots selected.');
       return;
     }
-    const baseMeetingName = meetingNameInput.value.trim();
-    if (!baseMeetingName) {
-      showError('Please enter a base meeting name.');
+    const baseMeetingTitle = meetingTitleInput.value.trim();
+    if (!baseMeetingTitle) {
+      showError('Please enter a meeting title.');
       return;
     }
+    
+    const meetingMemo = meetingMemoInput.value.trim();
 
     bookMeetingButton.disabled = true;
     bookMeetingButton.textContent = `Booking ${selectedSlotIndices.length}...`;
@@ -580,7 +593,7 @@ async function bookSelectedMeetings() {
     for (let i = 0; i < selectedSlotIndices.length; i++) {
       const slotIndex = selectedSlotIndices[i];
       const slot = availableSlots[slotIndex];
-      const meetingName = `${baseMeetingName} (${i + 1}/${selectedSlotIndices.length})`;
+      const meetingTitle = `${baseMeetingTitle} (${i + 1}/${selectedSlotIndices.length})`;
 
       const offsetMinutes = new Date().getTimezoneOffset();
       const offsetHours = Math.abs(offsetMinutes / 60);
@@ -592,7 +605,8 @@ async function bookSelectedMeetings() {
       const attendees = selectedCalendars.map(cal => ({ email: cal.id }));
 
       const eventDetails = {
-        summary: meetingName,
+        summary: meetingTitle,
+        description: meetingMemo, // Add memo as description
         start: { dateTime: `${slot.date}T${minutesToTime(slot.start)}:00${offsetString}` },
         end: { dateTime: `${slot.date}T${minutesToTime(slot.end)}:00${offsetString}` },
         attendees: attendees // Add attendees here
@@ -634,7 +648,8 @@ async function bookSelectedMeetings() {
       showError(message + ` Check console for errors.`);
     }
 
-    meetingNameInput.value = '';
+    meetingTitleInput.value = '';
+    meetingMemoInput.value = '';
     updateBulkActionsVisibility();
     // Note: Slots are not automatically refreshed after booking
 

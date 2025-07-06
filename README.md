@@ -29,10 +29,13 @@ Common Ground is a Chrome extension that helps you schedule meetings efficiently
 - **Easy Copy-to-Clipboard**: One-click copying of formatted available slots
 - **Localized Date/Time Display**: Proper weekday abbreviations for each language
 
-### 📅 Meeting Management
+### 📅 Enhanced Meeting Management
 - **One-Click Booking**: Create calendar events directly from available slots
-- **Custom Meeting Names**: Specify meeting titles when booking
+- **Structured Meeting Details**: Enter both meeting titles and detailed memos/agendas
+- **Expandable Memo Field**: Multi-line textarea for comprehensive meeting notes and agendas
+- **Automatic Description Integration**: Meeting memos are automatically added to calendar event descriptions
 - **Primary Calendar Integration**: Automatically books to your main calendar
+- **Clean Three-Row Interface**: Organized layout with separate rows for title, memo, and actions
 
 ## Installation & Setup
 
@@ -79,8 +82,11 @@ zip dist/extension.zip manifest.json background.js calendar-api.js common.css co
 
 3. **Review and Book**:
    - Review the suggested time slots in your preferred language format
+   - Select the slots you want to book by checking the boxes
+   - Enter a **meeting title** in the dedicated title field
+   - Add detailed **meeting notes, agenda, or instructions** in the expandable memo field (optional)
    - Copy formatted slots to share with others, or
-   - Click "Book Meeting" to create a calendar event
+   - Click "Book Selected" to create calendar events with your title and memo automatically included
 
 ## Configuration Options
 

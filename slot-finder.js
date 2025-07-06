@@ -142,8 +142,8 @@ function filterByMinDuration(availableBlocks, minDuration) {
  * @param {number} minDuration - Minimum duration in minutes
  * @param {number} maxDuration - Maximum duration in minutes
  * @param {number} numRequired - Number of slots required
- * @param {number} spreadDays - Required spread over days (minimum number of unique days to use if possible)
- * @returns {Array} Selected slots, prioritizing chronological order over spreading.
+ * @param {number} spreadDays - Required spread over days (minimum number of unique days to use)
+ * @returns {Array} Selected slots, ensuring proper day spreading when required.
  */
 function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, spreadDays) {
   // 1. Filter by minimum duration first
@@ -197,50 +197,24 @@ function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, 
     return a.start - b.start;
   });
 
-  const result = [];
-  const slotsAdded = new Set(); // Keep track of added slots (using a unique key)
-  const datesUsed = new Set();
-
-  // --- Primary Strategy: Chronological Selection ---
-  // Select slots chronologically, but respect spreadDays as a constraint
+  // 5. Group blocks by date for easier processing
+  const blocksByDate = {};
   for (const block of sortedAllAdjustedBlocks) {
-    if (result.length >= numRequired) break; // Stop if we have enough slots
-
-    const slotKey = `${block.date}-${block.start}-${block.end}`;
-    if (slotsAdded.has(slotKey)) continue; // Skip if already added
-
-    // Check if we should add this slot based on spreading constraint
-    const wouldExceedSpreadDays = spreadDays > 0 && 
-                                  !datesUsed.has(block.date) && 
-                                  datesUsed.size >= spreadDays;
-
-    // If we haven't reached the spread limit, or this date is already used, add the slot
-    if (!wouldExceedSpreadDays || datesUsed.has(block.date)) {
-      result.push(block);
-      slotsAdded.add(slotKey);
-      datesUsed.add(block.date);
-    }
+    (blocksByDate[block.date] = blocksByDate[block.date] || []).push(block);
   }
 
-  // --- Fallback Strategy: Force Spreading if Needed ---
-  // If we still need more slots and haven't met the spread requirement,
-  // force spreading to meet the minimum requirements
-  if (result.length < numRequired && spreadDays > 0 && datesUsed.size < spreadDays) {
-    // Group remaining blocks by date
-    const blocksByDate = {};
-    for (const block of sortedAllAdjustedBlocks) {
-      const slotKey = `${block.date}-${block.start}-${block.end}`;
-      if (!slotsAdded.has(slotKey)) {
-        (blocksByDate[block.date] = blocksByDate[block.date] || []).push(block);
-      }
-    }
+  const availableDates = Object.keys(blocksByDate).sort();
+  const result = [];
+  const slotsAdded = new Set(); // Keep track of added slots (using a unique key)
 
-    // Try to add one slot from each unused date until we meet requirements
-    const unusedDates = Object.keys(blocksByDate)
-                              .filter(date => !datesUsed.has(date))
-                              .sort();
-
-    for (const date of unusedDates) {
+  // 6. Handle spreading requirement
+  if (spreadDays > 0 && spreadDays <= availableDates.length) {
+    // Strategy: Ensure we use AT LEAST spreadDays different days
+    
+    // First, select one slot from each of the first spreadDays dates to ensure spreading
+    const requiredDates = availableDates.slice(0, spreadDays);
+    
+    for (const date of requiredDates) {
       if (result.length >= numRequired) break;
       
       const blocksForDay = blocksByDate[date].sort((a, b) => a.start - b.start);
@@ -250,10 +224,40 @@ function calculateSlots(availableBlocks, minDuration, maxDuration, numRequired, 
         
         result.push(block);
         slotsAdded.add(slotKey);
-        datesUsed.add(block.date);
+      }
+    }
+    
+    // Then, if we still need more slots, fill them chronologically from all available dates
+    if (result.length < numRequired) {
+      for (const block of sortedAllAdjustedBlocks) {
+        if (result.length >= numRequired) break;
+        
+        const slotKey = `${block.date}-${block.start}-${block.end}`;
+        if (!slotsAdded.has(slotKey)) {
+          result.push(block);
+          slotsAdded.add(slotKey);
+        }
+      }
+    }
+  } else {
+    // No spreading requirement or not enough days available - just select chronologically
+    for (const block of sortedAllAdjustedBlocks) {
+      if (result.length >= numRequired) break;
+      
+      const slotKey = `${block.date}-${block.start}-${block.end}`;
+      if (!slotsAdded.has(slotKey)) {
+        result.push(block);
+        slotsAdded.add(slotKey);
       }
     }
   }
+
+  // 7. Sort final result chronologically to maintain order
+  result.sort((a, b) => {
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
+    return a.start - b.start;
+  });
 
   // Return the final list of slots, ensuring it doesn't exceed numRequired
   return result.slice(0, numRequired);
