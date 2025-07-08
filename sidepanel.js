@@ -75,7 +75,19 @@ async function initialize() {
       currentLanguage = syncData.language || 'en';
 
       // Apply slot finding settings to form fields
-      startingDateInput.value = syncData.startingDate || new Date().toISOString().split('T')[0];
+      // Enhanced starting date logic: if stored date is in the past, set to tomorrow
+      const today = new Date();
+      const todayString = today.toISOString().split('T')[0];
+      let startingDate = syncData.startingDate || todayString;
+      
+      // If the stored starting date is before today, set it to tomorrow
+      if (startingDate < todayString) {
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        startingDate = tomorrow.toISOString().split('T')[0];
+      }
+      
+      startingDateInput.value = startingDate;
       minDurationInput.value = syncData.minDuration || 60;
       maxDurationInput.value = syncData.maxDuration || 120;
       requiredSlotsInput.value = syncData.numSlots || 3;
@@ -463,6 +475,7 @@ async function findSlots() {
       }
     }
 
+
     availableSlots = await findAvailableSlots(currentSlotSettings, allEvents);
     renderSlots(availableSlots);
 
@@ -553,9 +566,10 @@ function handleSelectAllChange(event) {
 
 // Book meetings for all selected slots
 async function bookSelectedMeetings() {
-  // Read the latest language setting in case it changed, needed for copying
-  const syncData = await chrome.storage.sync.get(['language']);
+  // Read the latest language setting and notification preference
+  const syncData = await chrome.storage.sync.get(['language', 'sendNotifications']);
   const activeLanguage = syncData.language || 'en';
+  const sendNotifications = syncData.sendNotifications !== undefined ? syncData.sendNotifications : true;
 
   try {
     if (selectedSlotIndices.length === 0) {
@@ -613,7 +627,7 @@ async function bookSelectedMeetings() {
       };
 
       try {
-        await createEvent(primaryCalendarId, eventDetails);
+        await createEvent(primaryCalendarId, eventDetails, sendNotifications);
         successfulBookings++;
       } catch (error) {
         console.error(`Failed to book slot ${i + 1}:`, error);

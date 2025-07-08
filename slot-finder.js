@@ -279,7 +279,7 @@ function eventsToBusyBlocks(events) {
 
     // Handle all-day events and multi-day events
     if (event.start.date && !event.start.dateTime) {
-      // This is an all-day event
+      // This is a traditional all-day event with date format
       const startDateObj = new Date(event.start.date + 'T00:00:00');
       const endDateObj = new Date(event.end.date + 'T00:00:00');
       
@@ -293,6 +293,51 @@ function eventsToBusyBlocks(events) {
         
         busyBlocks.push(createTimeBlock(date, 0, 24 * 60)); // Block the entire day
         currentDate.setDate(currentDate.getDate() + 1);
+      }
+    } else if (event.eventType === 'outOfOffice' && event.start.dateTime && event.end.dateTime) {
+      // Handle out-of-office events that use dateTime format but represent full days
+      // Check if this is a full-day out-of-office event (starts at 00:00 and spans to next day 00:00)
+      const startHour = startDateTime.getHours();
+      const startMinute = startDateTime.getMinutes();
+      const endHour = endDateTime.getHours();
+      const endMinute = endDateTime.getMinutes();
+      
+      if (startHour === 0 && startMinute === 0 && endHour === 0 && endMinute === 0) {
+        // This is a full-day out-of-office event using dateTime format
+        const currentDate = new Date(startDateTime);
+        while (currentDate < endDateTime) {
+          const year = currentDate.getFullYear();
+          const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+          const day = currentDate.getDate().toString().padStart(2, '0');
+          const date = `${year}-${month}-${day}`;
+          
+          busyBlocks.push(createTimeBlock(date, 0, 24 * 60)); // Block the entire day
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      } else {
+        // This is a timed out-of-office event, treat as regular timed event
+        const year = startDateTime.getFullYear();
+        const month = (startDateTime.getMonth() + 1).toString().padStart(2, '0');
+        const day = startDateTime.getDate().toString().padStart(2, '0');
+        const date = `${year}-${month}-${day}`;
+
+        let startTime = startDateTime.getHours() * 60 + startDateTime.getMinutes();
+        let endTime = endDateTime.getHours() * 60 + endDateTime.getMinutes();
+
+        // Snap start time down to the nearest 30-minute interval
+        startTime = startTime - (startTime % 30);
+
+        // Snap end time up to the nearest 30-minute interval
+        if (endTime % 30 !== 0) {
+          endTime = endTime + (30 - (endTime % 30));
+        }
+
+        // Ensure snapped end time doesn't exceed the day boundary (1440 minutes)
+        endTime = Math.min(endTime, 24 * 60);
+
+        if (startTime < endTime) {
+          busyBlocks.push(createTimeBlock(date, startTime, endTime));
+        }
       }
     } else {
       // This is a timed event

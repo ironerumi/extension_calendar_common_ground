@@ -10,6 +10,7 @@ const availableUntilInput = document.getElementById('available-until');
 const dayCheckboxes = document.querySelectorAll('.day-checkbox');
 const exclusionsContainer = document.getElementById('exclusions-container');
 const addExclusionButton = document.getElementById('add-exclusion');
+const sendNotificationsCheckbox = document.getElementById('send-notifications');
 const languageToggle = document.getElementById('language-toggle');
 const saveButton = document.getElementById('save-button');
 const statusDiv = document.getElementById('status');
@@ -31,6 +32,7 @@ async function initialize() {
     'availableUntil',
     'selectedDays',
     'exclusions',
+    'sendNotifications',
     'language'
     // No longer loading 'selectedCalendarIds' here
   ]);
@@ -58,6 +60,7 @@ function applyGeneralSettings(settingsData = {}) {
     const availableUntil = settingsData.availableUntil || '18:00';
     const selectedDays = settingsData.selectedDays || [false, true, true, true, true, true, false]; // Mon-Fri default
     const exclusions = settingsData.exclusions || [{ start: '12:00', end: '13:00' }]; // Default lunch
+    const sendNotifications = settingsData.sendNotifications !== undefined ? settingsData.sendNotifications : true; // Default to true
     const language = settingsData.language || 'en';
 
     availableFromInput.value = availableFrom;
@@ -71,6 +74,7 @@ function applyGeneralSettings(settingsData = {}) {
     exclusionsContainer.innerHTML = '';
     exclusions.forEach(addExclusionItem);
 
+    sendNotificationsCheckbox.checked = sendNotifications;
     languageToggle.checked = language === 'ja';
 }
 
@@ -264,6 +268,7 @@ async function saveGeneralOptions(e) {
       }
     });
 
+    const sendNotifications = sendNotificationsCheckbox.checked;
     const language = languageToggle.checked ? 'ja' : 'en';
 
     // Save only general settings to Sync storage
@@ -272,6 +277,7 @@ async function saveGeneralOptions(e) {
       availableUntil,
       selectedDays,
       exclusions,
+      sendNotifications,
       language
       // No longer saving 'selectedCalendarIds' here
     });

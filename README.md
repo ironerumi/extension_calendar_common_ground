@@ -35,6 +35,7 @@ Common Ground is a Chrome extension that helps you schedule meetings efficiently
 - **Expandable Memo Field**: Multi-line textarea for comprehensive meeting notes and agendas
 - **Automatic Description Integration**: Meeting memos are automatically added to calendar event descriptions
 - **Primary Calendar Integration**: Automatically books to your main calendar
+- **Email Notifications**: Send email notifications to attendees by default (configurable in options)
 - **Clean Three-Row Interface**: Organized layout with separate rows for title, memo, and actions
 
 ## Installation & Setup
@@ -96,6 +97,7 @@ Access the options page by right-clicking the extension icon and selecting "Opti
 - **Working Hours**: Set your general availability window
 - **Exclusion Periods**: Define times to always exclude (like lunch breaks)
 - **Meeting Preferences**: Configure default duration and slot requirements
+- **Email Notifications**: Enable or disable sending email notifications to participants when booking events (enabled by default)
 - **Language Settings**: Choose output format for copied text
 
 ## Privacy & Security

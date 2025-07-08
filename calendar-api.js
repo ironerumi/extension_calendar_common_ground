@@ -91,9 +91,10 @@ async function getEvents(calendarId, startDate, endDate) {
  * Create a new calendar event
  * @param {string} calendarId - ID of the calendar
  * @param {Object} eventDetails - Details for the new event
+ * @param {boolean} sendNotifications - Whether to send email notifications to attendees
  * @returns {Promise<Object>} Created event
  */
-async function createEvent(calendarId, eventDetails) {
+async function createEvent(calendarId, eventDetails, sendNotifications = false) {
   try {
     const response = await chrome.runtime.sendMessage({ action: 'getAuthToken' });
     if (!response || !response.token) {
@@ -101,7 +102,16 @@ async function createEvent(calendarId, eventDetails) {
     }
     
     const token = response.token;
-    const apiResponse = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`, {
+    
+    // Build URL with sendUpdates parameter
+    let url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`;
+    if (sendNotifications) {
+      url += '?sendUpdates=all';
+    } else {
+      url += '?sendUpdates=none';
+    }
+    
+    const apiResponse = await fetch(url, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
